@@ -7,6 +7,11 @@ substitutions:
 
 esphome:
   name: ${name}
+  on_boot:
+    priority: -100
+    then:
+      - espnow.set_channel:
+          channel: 1
 
 esp32:
   board: esp32dev
@@ -16,6 +21,7 @@ esp32:
 logger:
 
 wifi:
+  enable_on_boot: false   # off in normal use; hold button 10s to enable
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   # If the router can't be reached (~1 min), open a hotspot so the plug
@@ -69,9 +75,19 @@ binary_sensor:
       number: GPIO4
       mode: INPUT_PULLUP
       inverted: true
-    on_press:
-      - script.stop: run_timer
-      - switch.toggle: relay
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+        then:
+          - script.stop: run_timer
+          - switch.toggle: relay
+      - timing:
+          - ON for at least 10s
+        then:
+          - logger.log: "Maintenance: enabling WiFi + hotspot for 15 min"
+          - wifi.enable:
+          - delay: 15min
+          - lambda: "App.safe_reboot();"
 
 status_led:
   pin:
