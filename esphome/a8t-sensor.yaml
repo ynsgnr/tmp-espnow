@@ -23,9 +23,7 @@ logger:
 # wifi + ota are required for the over-the-air migration from Tasmota.
 # With wifi enabled, ESP-NOW uses the router's channel (no `channel:`).
 wifi:
-  # FIRST-INSTALL BUILD: WiFi stays on so the plug joins the router.
-  # After migrating, uncomment to turn WiFi off at boot (button hold 10s enables it):
-  # enable_on_boot: false
+  enable_on_boot: false   # off in normal use; hold button 10s to enable
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   # If the router can't be reached (~1 min), open a hotspot so the plug
