@@ -2,7 +2,7 @@
 # tells plug B (via ESP-NOW) to switch on. No router needed.
 substitutions:
   name: a8t-sensor
-  peer_mac: "00:00:00:00:00:00"   # <- plug B's MAC (B's Tasmota Information page)
+  peer_mac: "FC:B4:67:35:67:C0"   # plug B's MAC
   threshold_w: "10"               # watts that count as "load detected" (idle noise reads ~3 W)
 
 esphome:
@@ -91,13 +91,16 @@ sensor:
     cf_pin: GPIO27
     cf1_pin: GPIO26
     update_interval: 5s
-    # Defaults; calibrate against a known load if readings are off.
+    # ESPHome defaults, scaled by the filters below to match Tasmota's
+    # calibration (PowerCal 12530, VoltageCal 1950, CurrentCal 3500).
     current_resistor: 0.001
     voltage_divider: 2351
     power:
       name: "Power"
       id: power_w
       unit_of_measurement: W
+      filters:
+        - multiply: 0.8423
       on_value:
         then:
           - if:
@@ -110,5 +113,9 @@ sensor:
                     continue_on_error: true
     current:
       name: "Current"
+      filters:
+        - multiply: 0.8974
     voltage:
       name: "Voltage"
+      filters:
+        - multiply: 0.8619
