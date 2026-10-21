@@ -88,8 +88,12 @@ sensor:
     sel_pin:
       number: GPIO16
       inverted: true
-    cf_pin: GPIO35
-    cf1_pin: GPIO34
+    cf_pin:
+      number: GPIO35
+      mode: INPUT
+    cf1_pin:
+      number: GPIO34
+      mode: INPUT
     update_interval: 5s
     # Defaults; calibrate against a known load if readings are off.
     current_resistor: 0.001
