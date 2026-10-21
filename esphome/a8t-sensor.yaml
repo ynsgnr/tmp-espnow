@@ -3,7 +3,7 @@
 substitutions:
   name: a8t-sensor
   peer_mac: "00:00:00:00:00:00"   # <- plug B's MAC (B's Tasmota Information page)
-  threshold_w: "5"                # watts that count as "load detected"
+  threshold_w: "10"               # watts that count as "load detected" (idle noise reads ~3 W)
 
 esphome:
   name: ${name}
