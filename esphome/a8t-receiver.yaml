@@ -37,7 +37,6 @@ captive_portal:
 
 ota:
   - platform: esphome
-    allow_partition_access: true   # first image only; remove afterwards
 
 espnow:
   peers:
