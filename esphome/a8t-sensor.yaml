@@ -47,7 +47,7 @@ espnow:
 
 output:
   - platform: gpio
-    pin: GPIO15
+    pin: GPIO13
     id: relay_out
 
 switch:
@@ -86,14 +86,10 @@ sensor:
   - platform: hlw8012
     model: BL0937
     sel_pin:
-      number: GPIO16
+      number: GPIO14
       inverted: true
-    cf_pin:
-      number: GPIO35
-      mode: INPUT
-    cf1_pin:
-      number: GPIO34
-      mode: INPUT
+    cf_pin: GPIO27
+    cf1_pin: GPIO26
     update_interval: 5s
     # Defaults; calibrate against a known load if readings are off.
     current_resistor: 0.001

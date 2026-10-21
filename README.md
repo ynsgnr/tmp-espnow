@@ -3,10 +3,9 @@
 Plug A (sensor) detects power draw and sends an ESP-NOW packet to plug B,
 which switches on for 30 minutes and then off.
 
-Pins from the A8T Tasmota template: relay GPIO15, button GPIO4, LED GPIO2
-(inverted), BL0937 SEL GPIO16, CF1 GPIO34, CF GPIO35. CF/CF1 and SEL
-polarity are inferred and unverified; swap pins / toggle `inverted` if
-power reads wrong.
+Pins from the A8T Tasmota template (checked against Tasmota's ESP32
+source): relay GPIO13, button GPIO4, LED GPIO2 (inverted), BL0937 SEL
+GPIO14 (inverted), CF1 GPIO26, CF GPIO27.
 
 ## Migrate over the air (no opening the plug)
 Follow https://esphome.io/guides/migrate_sonoff_tasmota/ :

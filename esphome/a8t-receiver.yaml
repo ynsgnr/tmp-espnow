@@ -51,7 +51,7 @@ espnow:
 
 output:
   - platform: gpio
-    pin: GPIO15
+    pin: GPIO13
     id: relay_out
 
 switch:
