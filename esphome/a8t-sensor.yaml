@@ -39,9 +39,6 @@ captive_portal:
 
 ota:
   - platform: esphome
-    # Needed ONLY in the first ESPHome image uploaded from Tasmota,
-    # to migrate the partition table. Remove afterwards.
-    allow_partition_access: true
 
 espnow:
   peers:
