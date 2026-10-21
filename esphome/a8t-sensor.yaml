@@ -1,0 +1,82 @@
+# Plug A: watches its own power draw and, while a load is running,
+# tells plug B (via ESP-NOW) to switch on. No router needed.
+substitutions:
+  name: a8t-sensor
+  peer_mac: "00:00:00:00:00:00"   # <- plug B's MAC (B's Tasmota Information page)
+  threshold_w: "5"                # watts that count as "load detected"
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+
+# No wifi: block on purpose, so ESP-NOW runs on the fixed channel below.
+# (Adding wifi: later makes ESP-NOW follow the router's channel and
+# `channel:` must then be removed.)
+espnow:
+  channel: 1
+  peers:
+    - ${peer_mac}
+
+output:
+  - platform: gpio
+    pin: GPIO15
+    id: relay_out
+
+switch:
+  - platform: output
+    name: "Relay"
+    id: relay
+    output: relay_out
+    restore_mode: RESTORE_DEFAULT_ON
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: true
+    id: button
+    on_press:
+      - switch.toggle: relay
+
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
+
+sensor:
+  - platform: hlw8012
+    model: BL0937
+    sel_pin:
+      number: GPIO16
+      inverted: true
+    cf_pin: GPIO35
+    cf1_pin: GPIO34
+    update_interval: 5s
+    # Defaults; calibrate against a known load if readings are off.
+    current_resistor: 0.001
+    voltage_divider: 2351
+    power:
+      name: "Power"
+      id: power_w
+      unit_of_measurement: W
+      on_value:
+        then:
+          - if:
+              condition:
+                lambda: "return x > ${threshold_w};"
+              then:
+                - espnow.send:
+                    address: ${peer_mac}
+                    data: [0x01]
+                    continue_on_error: true
+    current:
+      name: "Current"
+    voltage:
+      name: "Voltage"

@@ -1,0 +1,64 @@
+# Plug B: switches on for 30 minutes whenever plug A sends the trigger
+# over ESP-NOW, then switches off. Re-triggers restart the 30 minutes.
+substitutions:
+  name: a8t-receiver
+  peer_mac: "FC:B4:67:39:52:18"   # plug A's MAC
+  on_time: 30min
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+
+espnow:
+  channel: 1
+  peers:
+    - ${peer_mac}
+  on_receive:
+    - address: ${peer_mac}
+      then:
+        - if:
+            condition:
+              lambda: "return size >= 1 && data[0] == 0x01;"
+            then:
+              - script.execute: run_timer
+
+output:
+  - platform: gpio
+    pin: GPIO15
+    id: relay_out
+
+switch:
+  - platform: output
+    name: "Relay"
+    id: relay
+    output: relay_out
+    restore_mode: ALWAYS_OFF
+
+script:
+  - id: run_timer
+    mode: restart
+    then:
+      - switch.turn_on: relay
+      - delay: ${on_time}
+      - switch.turn_off: relay
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      - script.stop: run_timer
+      - switch.toggle: relay
+
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
