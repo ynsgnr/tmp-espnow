@@ -15,11 +15,19 @@ esp32:
 
 logger:
 
-# No wifi: block on purpose, so ESP-NOW runs on the fixed channel below.
-# (Adding wifi: later makes ESP-NOW follow the router's channel and
-# `channel:` must then be removed.)
+# wifi + ota are required for the over-the-air migration from Tasmota.
+# With wifi enabled, ESP-NOW uses the router's channel (no `channel:`).
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+  - platform: esphome
+    # Needed ONLY in the first ESPHome image uploaded from Tasmota,
+    # to migrate the partition table. Remove afterwards.
+    allow_partition_access: true
+
 espnow:
-  channel: 1
   peers:
     - ${peer_mac}
 

@@ -1,19 +1,20 @@
 # Nous A8T plug-to-plug trigger (ESPHome + ESP-NOW)
 
 Plug A (sensor) detects power draw and sends an ESP-NOW packet to plug B,
-which switches on for 30 minutes and then off. No router needed.
+which switches on for 30 minutes and then off.
 
-Pins come from the Tasmota template of the A8T:
-relay GPIO15, button GPIO4, LED GPIO2 (inverted), BL0937: SEL GPIO16,
-CF1 GPIO34, CF GPIO35.
-The CF/CF1 assignment and SEL polarity are inferred from the template
-and unverified. If the reading is wrong, swap the two pins or toggle `inverted`.
+Pins from the A8T Tasmota template: relay GPIO15, button GPIO4, LED GPIO2
+(inverted), BL0937 SEL GPIO16, CF1 GPIO34, CF GPIO35. CF/CF1 and SEL
+polarity are inferred and unverified; swap pins / toggle `inverted` if
+power reads wrong.
 
-## Build
-    pip install esphome
-    esphome compile esphome/a8t-sensor.yaml
-    esphome compile esphome/a8t-receiver.yaml
-
-Set `peer_mac` in `a8t-sensor.yaml` to plug B's MAC first.
-Flash `firmware.factory.bin` over serial (plug disconnected from mains).
-There is no wifi/OTA in these configs, so later updates also need serial.
+## Migrate over the air (no opening the plug)
+Follow https://esphome.io/guides/migrate_sonoff_tasmota/ :
+1. `cp esphome/secrets.yaml.example esphome/secrets.yaml`, fill in WiFi.
+   Set `peer_mac` in a8t-sensor.yaml to plug B's MAC.
+2. `esphome compile esphome/a8t-receiver.yaml`, then upload `firmware.bin`
+   via Tasmota Firmware Upgrade -> Upgrade by file.
+3. Migrate the partition table (`esphome upload --partition-table ...`)
+   using the method that fits the "Used size" in the logs.
+4. Remove `allow_partition_access`, reflash normally.
+Power loss during step 3 can brick the plug (serial needed to recover).
