@@ -20,6 +20,14 @@ logger:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  # If the router can't be reached (~1 min), open a hotspot so the plug
+  # can always be reached again. Join it, open http://192.168.4.1 and
+  # upload a new firmware.bin or change the WiFi.
+  ap:
+    ssid: "a8t-sensor-fallback"
+    password: !secret ap_password
+
+captive_portal:
 
 ota:
   - platform: esphome
